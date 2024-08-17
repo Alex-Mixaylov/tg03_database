@@ -41,8 +41,7 @@ def init_db():
     conn.commit()
     conn.close()
 
-init_db()
-
+init_db() #База данных создается 1 раз  благодаря  IF NOT EXISTS
 
 @dp.message(CommandStart())
 async def start(message: Message, state: FSMContext):
@@ -75,10 +74,22 @@ async def city(message: Message, state: FSMContext):
     await message.answer("Ваши данные сохранены")
 
     async with aiohttp.ClientSession() as session:
-        async with session.get(
-            f"http://api.openweathermap.org/data/2.5/weather?q={user_data['city']}&appid={WEATHER_API_KEY}&units=metric") as response:
-
-
+        async with session.get(f"http://api.openweathermap.org/data/2.5/weather?q={user_data['city']}&appid={WEATHER_API_KEY}&units=metric") as response:
+            if response.status == 200:
+                weather_data = await response.json()
+                main = weather_data['main']
+                weather = weather_data['weather'][0]
+                temperature = main['temp']
+                description = weather['description']
+                humidity = main['humidity']
+                weather_report = (f"Город - {user_data['city']}\\n"
+                                  f"Температура - {temperature}\\n"
+                                  f"Влажность воздуха - {humidity}\\n"
+                                  f"Описание погоды - {description}")
+                await message.answer(weather_report)
+            else:
+                await message.answer("Произошла ошибка при получении данных о погоде")
+    await state.clear()
 
 async def main():
     await dp.start_polling(bot)
