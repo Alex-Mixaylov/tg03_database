@@ -71,7 +71,7 @@ async def city(message: Message, state: FSMContext):
     conn.commit()
     conn.close()
 
-    await message.answer("Ваши данные сохранены")
+    await message.answer("Погода в Вашем городе")
 
     async with aiohttp.ClientSession() as session:
         async with session.get(f"http://api.openweathermap.org/data/2.5/weather?q={user_data['city']}&appid={WEATHER_API_KEY}&units=metric") as response:
@@ -82,9 +82,9 @@ async def city(message: Message, state: FSMContext):
                 temperature = main['temp']
                 description = weather['description']
                 humidity = main['humidity']
-                weather_report = (f"Город - {user_data['city']}\\n"
-                                  f"Температура - {temperature}\\n"
-                                  f"Влажность воздуха - {humidity}\\n"
+                weather_report = (f"Город - {user_data['city']}\n"
+                                  f"Температура, C - {temperature}\n"
+                                  f"Влажность воздуха, % - {humidity}\n"
                                   f"Описание погоды - {description}")
                 await message.answer(weather_report)
             else:
