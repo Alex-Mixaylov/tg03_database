@@ -16,10 +16,11 @@ import logging
 
 dotenv.load_dotenv()
 bot = Bot(os.getenv('TOKEN'))
+WEATHER_API_KEY = os.getenv('WEATHER_API_KEY')
+
 dp = Dispatcher()
 
 logging.basicConfig(level=logging.INFO)
-
 
 #Эти состояния будут использоваться для хранения и отслеживания, когда бот будет продолжать работу с пользователем
 class Form(StatesGroup):
@@ -44,8 +45,40 @@ init_db()
 
 
 @dp.message(CommandStart())
-async def start(message: Message):
-    await message.answer(f"Привет, {message.from_user.full_name}! Это урок TG03")
+async def start(message: Message, state: FSMContext):
+    await message.answer("Привет! Как тебя зовут?")
+    await state.set_state(Form.name)
+
+@dp.message(Form.name)
+async def name(message: Message, state: FSMContext):
+    await state.update_data(name=message.text)
+    await message.answer("Сколько тебе лет?")
+    await state.set_state(Form.age)
+
+@dp.message(Form.age)
+async def age(message: Message, state: FSMContext):
+    await state.update_data(age=message.text)
+    await message.answer("В каком городе ты живешь?")
+    await state.set_state(Form.city)
+
+@dp.message(Form.city)
+async def city(message: Message, state: FSMContext):
+    await state.update_data(city=message.text)
+    user_data = await state.get_data()
+
+    conn = sqlite3.connect('user_data.db')
+    cur = conn.cursor()
+    cur.execute('INSERT INTO users (name, age, city) VALUES (?, ?, ?)', (user_data['name'], user_data['age'], user_data['city']))
+    conn.commit()
+    conn.close()
+
+    await message.answer("Ваши данные сохранены")
+
+    async with aiohttp.ClientSession() as session:
+        async with session.get(
+            f"http://api.openweathermap.org/data/2.5/weather?q={user_data['city']}&appid={WEATHER_API_KEY}&units=metric") as response:
+
+
 
 async def main():
     await dp.start_polling(bot)
