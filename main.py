@@ -29,7 +29,7 @@ class Form(StatesGroup):
 
 def init_db():
     conn = sqlite3.connect('user_data.db')
-    сur = conn.cursor()
+    cur = conn.cursor()
     cur.execute('''
 	CREATE TABLE IF NOT EXISTS users (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,10 +37,12 @@ def init_db():
 	age INTEGER NOT NULL,
 	city TEXT NOT NULL)
 	''')
-    сonn.commit()
-    сonn.close()
+    conn.commit()
+    conn.close()
 
 init_db()
+
+
 @dp.message(CommandStart())
 async def start(message: Message):
     await message.answer(f"Привет, {message.from_user.full_name}! Это урок TG03")
