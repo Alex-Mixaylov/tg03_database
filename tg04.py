@@ -13,6 +13,8 @@ from aiogram.fsm.state import State, StatesGroup
 import sqlite3
 import logging
 
+import keyboards as kb
+
 dotenv.load_dotenv()
 bot = Bot(os.getenv('TOKEN'))
 
@@ -43,7 +45,7 @@ init_db() #База данных создается 1 раз  благодаря
 
 @dp.message(CommandStart())
 async def start(message: Message, state: FSMContext):
-    await message.answer("Привет! Как тебя зовут?")
+    await message.answer("Привет! Как тебя зовут?", reply_markup=kb.kboard)
     await state.set_state(Form.name)
 
 @dp.message(Form.name)
