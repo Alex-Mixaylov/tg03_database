@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import os
 
 import asyncio
-from aiogram import Bot, Dispatcher
+from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
 from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
@@ -13,7 +13,7 @@ from aiogram.fsm.state import State, StatesGroup
 import sqlite3
 import logging
 
-import keyboards as kb
+#import keyboards as kb
 
 dotenv.load_dotenv()
 bot = Bot(os.getenv('TOKEN'))
@@ -43,9 +43,15 @@ def init_db():
 
 init_db() #База данных создается 1 раз  благодаря  IF NOT EXISTS
 
+
+# @dp.message(F.text == "Тестовая кнопка 1")
+# async def start(message: Message):
+#     await message.answer("Обработка нажатия на reply кнопку Тестовая кнопка 1")
+
 @dp.message(CommandStart())
 async def start(message: Message, state: FSMContext):
-    await message.answer("Привет! Как тебя зовут?", reply_markup=kb.kboard)
+    #await message.answer("Привет! Как тебя зовут?", reply_markup=kb.kboard)
+    await message.answer("Привет! Как тебя зовут?")
     await state.set_state(Form.name)
 
 @dp.message(Form.name)
