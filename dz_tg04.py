@@ -4,6 +4,7 @@ from aiogram.filters import Command
 from aiogram import F
 from dotenv import load_dotenv
 import os
+import asyncio
 import keyboard as kb  # Импортируем клавиатуры из файла keyboard.py
 
 # Загрузка переменных окружения
@@ -54,5 +55,9 @@ async def option_1_selected(callback_query: types.CallbackQuery):
 async def option_2_selected(callback_query: types.CallbackQuery):
     await callback_query.message.answer("Вы выбрали Опцию 2")
 
+# Запуск поллинга
+async def main():
+    await dp.start_polling(bot, skip_updates=True)
+
 if __name__ == "__main__":
-    dp.start_polling(bot, skip_updates=True)
+    asyncio.run(main())
