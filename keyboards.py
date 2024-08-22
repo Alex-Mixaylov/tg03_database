@@ -7,7 +7,7 @@ kboard = ReplyKeyboardMarkup(keyboard=[
 ], resize_keyboard=True)
 
 inline_kboard= InlineKeyboardMarkup(inline_keyboard=[
-   [InlineKeyboardButton(text="Видео", url="https://www.youtube.com/watch?v=HfaIcB4Ogxk")]
+   [InlineKeyboardButton(text="Видео", url="https://www.examle.com/")]
 ])
 
 builder = ["кнопка 1", "кнопка 2", "кнопка 3", "кнопка 4"]
